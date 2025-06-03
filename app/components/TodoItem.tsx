@@ -4,7 +4,9 @@ import { useEffect,useState } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash,faCheck } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";
+import { dataSeen } from "../redux/dataGetter";
 import { addData } from "../redux/dataStorage";
+import { activateModal } from "../redux/modalActivator"
 
 
 interface TodoSchema {
@@ -15,7 +17,7 @@ interface TodoSchema {
 
 const TodoItem = (props: TodoSchema) => {
     // destructuring props
-    const { todoName,id,isCompleted } = props
+    const { todoName,id,isCompleted  } = props
 
     const deleteDataDELETE = async () => {
         try {
@@ -72,6 +74,23 @@ const TodoItem = (props: TodoSchema) => {
         if (!handleCompletedPATCH)
             return;
     }
+
+    const getItemGET = async () => {
+        try {
+            const response = await fetch(`http://localhost:4080/api/todo/${id}` , {
+                method: "GET",
+            })
+            const data = await response.json();
+            dispatch(dataSeen(data.item))
+            
+        } catch (err) {
+            console.error(err)
+        }
+    }
+    const handleEditing = async () => {
+        await getItemGET()
+        dispatch(activateModal());
+    }
   return (
     <div className="w-full border-b-2 border-gray-500 flex justify-between px-10 h-18 items-center">
 
@@ -97,7 +116,10 @@ const TodoItem = (props: TodoSchema) => {
              onClick={handleDelete}
              icon={faTrash} 
              className="text-red-600 text-xl hover:scale-110 hover:brightness-90 active:brightness-75 transition-all hover:cursor-pointer"/>
-             <FontAwesomeIcon icon={faEdit} className="text-xl hover:scale-110 hover:brightness-90 active:brightness-75 transition-all hover:cursor-pointer"/>
+             <FontAwesomeIcon 
+             onClick={handleEditing}
+             icon={faEdit} 
+             className="text-xl hover:scale-110 hover:brightness-90 active:brightness-75 transition-all hover:cursor-pointer"/>
         </div>
     </div>
   )

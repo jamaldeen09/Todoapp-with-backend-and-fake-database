@@ -5,6 +5,9 @@
   .primary {
     background-color: rgb(20, 20, 59);
   }
+  .primary-text {
+    color: rgb(20, 20, 59);
+  }
 }
 
 /* main styles */
